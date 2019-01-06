@@ -1,0 +1,14 @@
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\AdobeSignRESTClient.dll
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\AdobeSignRESTClient.pdb
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\Newtonsoft.Json.dll
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\RestSharp.dll
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\Newtonsoft.Json.pdb
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\Newtonsoft.Json.xml
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\RestSharp.xml
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Release\AdobeSignRESTClient.csprojAssemblyReference.cache
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Release\AdobeSignRESTClient.csproj.CoreCompileInputs.cache
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Release\AdobeSignRESTClient.csproj.CopyComplete
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Release\AdobeSignRESTClient.dll
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Release\AdobeSignRESTClient.pdb
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\log4net.dll
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Release\log4net.xml
