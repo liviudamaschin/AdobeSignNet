@@ -11,3 +11,4 @@ D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\bin\Debug\RestSharp.xml
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Debug\AdobeSignRESTClient.csproj.CopyComplete
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Debug\AdobeSignRESTClient.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Debug\AdobeSignRESTClient.pdb
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignRESTClient\obj\Debug\AdobeSignRESTClient.csprojAssemblyReference.cache

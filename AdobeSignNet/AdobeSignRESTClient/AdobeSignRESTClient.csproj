@@ -53,19 +53,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdobeSignREST.cs" />
-    <Compile Include="CreditAppREST.cs" />
     <Compile Include="ErrorHandling\AdobeSignBadRequestException.cs" />
     <Compile Include="ErrorHandling\AdobeSignOAuthException.cs" />
     <Compile Include="IAdobeSignREST.cs" />
-    <Compile Include="ICreditAppREST.cs" />
     <Compile Include="Models\AdobeSignError.cs" />
     <Compile Include="Models\AdobeSignErrorCode.cs" />
+    <Compile Include="Models\AgreementCancellationInfo.cs" />
     <Compile Include="Models\AgreementCreationResponse.cs" />
     <Compile Include="Models\AgreementMinimalRequest.cs" />
     <Compile Include="Models\AgreementResponse.cs" />
     <Compile Include="Models\AgreementSigningPositionResponse.cs" />
+    <Compile Include="Models\AgreementStateInfo.cs" />
     <Compile Include="Models\Cc.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
+    <Compile Include="Models\DocumentUrl.cs" />
+    <Compile Include="Models\EmailOption.cs" />
     <Compile Include="Models\ExternalId.cs" />
     <Compile Include="Models\FileInfo.cs" />
     <Compile Include="Models\FormConditionalAction.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Models\ParticipantSetInfo.cs" />
     <Compile Include="Models\PostSignOption.cs" />
     <Compile Include="Models\RefreshTokenResponse.cs" />
+    <Compile Include="Models\SendOption.cs" />
     <Compile Include="Models\SigningUrl.cs" />
     <Compile Include="Models\SigningUrlResponse.cs" />
     <Compile Include="Models\SigningUrlSetInfo.cs" />

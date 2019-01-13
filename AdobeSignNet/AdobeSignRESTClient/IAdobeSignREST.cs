@@ -39,6 +39,14 @@ namespace AdobeSignRESTClient
 
         Task<AgreementSigningPositionResponse> AgreementSigningPosition(int? creditDataId, string agreementId, FormFieldPutInfo formField);
 
+        DocumentUrl GetAgreementDocumentUrl(int? creditDataId, string agreementId);
+
+        bool GetAgreementDocuments(int? creditDataId, string agreementId);
+
+        AgreementResponse GetAgreement(int? creditDataId, string agreementId);
+
+        void UpdateAgreementStatus(int? creditDataId, string agreementId, string agreementStatus);
+
         //Task<AlternateParticipantResponse> AddParticipant(string agreementId, string participantSetId, string participantId, AlternateParticipantInfo participantInfo);
         //Task<AgreementStatusUpdateResponse> CancelAgreement(string agreementId, string comment, bool notifySigner);
         //Task<WidgetCreationResponse> CreateWidget(WidgetMinimalRequest newWidget);

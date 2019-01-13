@@ -23,6 +23,10 @@ namespace AdobeSignRESTClient.Models
         /// </summary>
         public List<ParticipantInfo> participantSetsInfo { get; set; }
 
+        public EmailOption emailOption { get; set; }
+
+        public ExternalId externalId{ get; set; }
+
         /// <summary>
         /// ['ESIGN' or 'WRITTEN']: Specifies the type of signature you would like to request - written or e-signature
         /// </summary>

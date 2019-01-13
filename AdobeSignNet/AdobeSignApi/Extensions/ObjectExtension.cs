@@ -12,5 +12,18 @@ namespace AdobeSignApi.Extensions
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
         }
+
+        public static bool HasProperty(this object obj, string propertyName)
+        {
+            return obj.GetType().GetProperty(propertyName) != null;
+        }
+
+        public static object GetPropertyValue(this object obj, string propertyName)
+        {
+
+            if (obj.GetType().GetProperty(propertyName) != null)
+                return obj.GetType().GetProperty(propertyName).GetValue(obj, null);
+            return null;
+        }
     }
 }

@@ -1,7 +1,0 @@
-﻿namespace AdobeSignRESTClient
-{
-    interface ICreditAppREST
-    {
-
-    }
-}

@@ -212,6 +212,32 @@ namespace AdobeSignRESTClient
             return agreementResponse;
         }
 
+        public void UpdateAgreementStatus(int? creditDataId, string agreementId, string agreementStatus)
+        {
+            string tag = this.GetAgreementETag(creditDataId, agreementId);
+
+            var request = new RestRequest($"{_apiEndpointVer}/agreements/{agreementId}/state", Method.PUT);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", $"Bearer {AccessToken}");
+            request.AddHeader("If-Match", tag);
+
+            AgreementStateInfo agrementStateInfo = new AgreementStateInfo
+            {
+                state = "CANCELLED",
+                agreementCancellationInfo = new AgreementCancellationInfo {
+                    comment = "",
+                    notifyOthers = false
+                }
+
+            };
+            var jsonString = JsonConvert.SerializeObject(agrementStateInfo);
+            //request.AddParameter("AgreementStateInfo", agrementStateInfo, ParameterType.RequestBody);
+            request.AddJsonBody(agrementStateInfo);
+            var result = _restClient.Execute(request);
+
+        }
+
+
         /// <inheritdoc />
         public async Task<AgreementSigningPositionResponse> AgreementSigningPosition(int? creditDataId, string agreementId, FormFieldPutInfo formField)
         {
@@ -254,6 +280,27 @@ namespace AdobeSignRESTClient
             IRestResponse<AgreementSigningPositionResponse> result = _restClient.Execute<AgreementSigningPositionResponse>(request);
 
             return await Task.FromResult(result.Data);
+        }
+
+        public DocumentUrl GetAgreementDocumentUrl(int? creditDataId, string agreementId)
+        {
+            var request = new RestRequest($"{_apiEndpointVer}/agreements/{agreementId}/combinedDocument/url", Method.GET);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", $"Bearer {AccessToken}");
+            var result = _restClient.Execute(request);
+            DocumentUrl agreementDocumentUrl = JsonConvert.DeserializeObject<DocumentUrl>(result.Content);
+            return agreementDocumentUrl ;
+        }
+
+        public bool GetAgreementDocuments(int? creditDataId, string agreementId)
+        {
+            var request = new RestRequest($"{_apiEndpointVer}/agreements/{agreementId}/documents", Method.GET);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", $"Bearer {AccessToken}");
+            var result = _restClient.Execute(request);
+            AgreementResponse agreementResponse = JsonConvert.DeserializeObject<AgreementResponse>(result.Content);
+
+            return true;
         }
 
         ///// <summary>

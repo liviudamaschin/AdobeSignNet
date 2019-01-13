@@ -12,6 +12,7 @@ namespace AdobeSignApi.EntityFramework.Entities
         public string Action { get; set; }
         public string Request { get; set; }
         public string Response { get; set; }
+        public string AgreementStatus { get; set; }
 
     }
 }
