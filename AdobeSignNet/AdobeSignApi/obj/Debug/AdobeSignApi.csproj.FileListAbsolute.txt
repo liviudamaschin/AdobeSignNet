@@ -1,4 +1,5 @@
-D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\obj\Debug\AdobeSignApi.csproj.CoreCompileInputs.cache
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.Xml.XPath.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\AdobeSignApi.dll.config
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\AdobeSignApi.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\AdobeSignApi.pdb
@@ -13,7 +14,6 @@ D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CodeAnalysis
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CodeAnalysis.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
-D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.CSharp.Core.targets
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
@@ -41,7 +41,6 @@ D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.Text.Encoding.C
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.ValueTuple.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.Xml.ReaderWriter.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.Xml.XmlDocument.dll
-D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.Xml.XPath.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\System.Xml.XPath.XDocument.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\vbc.exe
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\roslyn\vbc.exe.config
@@ -92,6 +91,7 @@ D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\System.Diagnostics.Diagnostic
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\Microsoft.AspNet.TelemetryCorrelation.xml
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\obj\Debug\AdobeSignApi.csprojAssemblyReference.cache
+D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\obj\Debug\AdobeSignApi.csproj.CoreCompileInputs.cache
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\obj\Debug\AdobeSignApi.csproj.CopyComplete
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\obj\Debug\AdobeSignApi.dll
 D:\_GIT\AdobeSignNet\AdobeSignNet\AdobeSignApi\obj\Debug\AdobeSignApi.pdb

@@ -82,6 +82,7 @@
     <Compile Include="Models\ParticipantInfo.cs" />
     <Compile Include="Models\ParticipantSetInfo.cs" />
     <Compile Include="Models\PostSignOption.cs" />
+    <Compile Include="Models\RefreshTokenRequest.cs" />
     <Compile Include="Models\RefreshTokenResponse.cs" />
     <Compile Include="Models\SendOption.cs" />
     <Compile Include="Models\SigningUrl.cs" />

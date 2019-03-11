@@ -13,7 +13,8 @@ namespace AdobeSignApi.EntityFramework
         public DbSet<ApplicationConfigurationEntity> ApplicationConfigurations { get; set; }
         public DbSet<CreditDataEntity> CreditData { get; set; }
         public DbSet<AdobeSignLogEntity> AdobeSignLogs { get; set; }
-        
+        public DbSet<DistributorLogEntity> DistributorLogs { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
         }

@@ -184,12 +184,17 @@
     <Compile Include="EntityFramework\Entities\ApplicationConfigurationEntity.cs" />
     <Compile Include="EntityFramework\CreditAppContext.cs" />
     <Compile Include="EntityFramework\Entities\CreditDataEntity.cs" />
+    <Compile Include="EntityFramework\Entities\DistributorLogEntity.cs" />
+    <Compile Include="Enums\CreditAppStatusEnum.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BrowserJsonFormatter.cs" />
+    <Compile Include="Models\AgreementCancelResponse.cs" />
+    <Compile Include="Models\AppStatusResponse.cs" />
     <Compile Include="Models\SigningDocumentResponse.cs" />
+    <Compile Include="Models\TokenInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

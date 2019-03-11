@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
 using System.Web.Http;
-using System.Web.Http.Results;
+//using System.Web.Mvc;
+//using System.Web.Mvc;
 using AdobeSignApi.EntityFramework;
+using AdobeSignApi.Enums;
 using AdobeSignApi.Extensions;
 using AdobeSignApi.Models;
 using AdobeSignRESTClient;
 using AdobeSignRESTClient.Models;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace AdobeSignApi.Controllers
 {
@@ -25,8 +28,9 @@ namespace AdobeSignApi.Controllers
         private const string AdobeSignApiUrlKey = "AdobeSignApiUrl";
         private const string AdobeClientIdKey = "AdobeClientId";
         private const string AdobeSecretCodeKey = "AdobeSecretCode";
+        private readonly string verifyTokenKey = "BMGVerifyTokenUrl";
         //private const string AdobeSignProxyApiUrlKey = "AdobeSignProxyApiUrlKey";
-        
+
 
         private static AdobeSignREST client;
         private readonly CreditAppRepository repository = new CreditAppRepository();
@@ -47,7 +51,7 @@ namespace AdobeSignApi.Controllers
             var refreshToken = this.repository.GetKeyValue(RefreshTokenKey);
             try
             {
-                
+
                 var response = client.Authorize(refreshToken);
                 repository.AddAdobeSignLog(creditDataId, "RefreshToken", $"refreshToken={refreshToken}", response);
             }
@@ -57,7 +61,7 @@ namespace AdobeSignApi.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-            
+
         }
 
         //[HttpPost]
@@ -66,7 +70,7 @@ namespace AdobeSignApi.Controllers
         {
             var httpRequest = HttpContext.Current.Request;
             var postedFile = httpRequest.Files[0];
-            
+
             var fileStream = postedFile.InputStream;
             byte[] fileByte;
 
@@ -75,7 +79,7 @@ namespace AdobeSignApi.Controllers
                 fileByte = br.ReadBytes((int)fileStream.Length);
             }
             this.RefreshToken(null);
-            var transientDocument = client.UploadTransientDocument(null,fileName, fileByte).Result;
+            var transientDocument = client.UploadTransientDocument(null, fileName, fileByte).Result;
             return transientDocument;
         }
 
@@ -93,14 +97,14 @@ namespace AdobeSignApi.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-            
+
         }
 
         [HttpPost]
         [Route("api/AdobeSign/SendDocumentForSignature")]
         public SigningDocumentResponse SendDocumentForSignature([FromUri] string filename, string creditDataId, string recipientEmail, string agreementName)
         {
-           
+
             var httpRequest = HttpContext.Current.Request;
             var postedFile = httpRequest.Files[0];
 
@@ -114,19 +118,28 @@ namespace AdobeSignApi.Controllers
 
             int creditId = Convert.ToInt32(creditDataId);
             this.RefreshToken(creditId);
-            var transientDocument=this.PostDocument(creditId, filename, fileByte);
-            //repository.AddAdobeSignLog(creditId, "PostDocument", filename, transientDocument.ToJson());
+            var transientDocument = this.PostDocument(creditId, filename, fileByte);
             var agreement = this.CreateAgreement(creditId, transientDocument.transientDocumentId, recipientEmail, agreementName);
-            //repository.AddAdobeSignLog(creditId, "CreateAgreement", $"transientDocumentId={transientDocument.transientDocumentId}, recipientEmail={recipientEmail}", agreement.ToJson());
             SigningUrlResponse signingUrls = new SigningUrlResponse();
+            int interval = 1500; //1.5 sec
+            var timeOutSettings = repository.GetKeyValue("RequestTimeout");
+            int timeout = 10000; // default 10 sec
+            if (timeOutSettings != null)
+            {
+                timeout = Convert.ToInt32(timeOutSettings) * 1000;
+            }
+
+
             int retries = 5;
+
+            retries = timeout / interval;
             int i = 1;
             while (signingUrls.signingUrlSetInfos == null && i <= retries)
             {
                 i++;
                 signingUrls = this.GetSigningUrl(creditId, agreement.id);
                 if (signingUrls.signingUrlSetInfos == null)
-                    Thread.Sleep(1000);
+                    Thread.Sleep(interval);
             }
 
             var adobeSigningUrl = string.Empty;
@@ -140,10 +153,11 @@ namespace AdobeSignApi.Controllers
             }
 
             return new SigningDocumentResponse
-                {
-                    agreementId = agreement.id, signingUrl = adobeSigningUrl
+            {
+                agreementId = agreement.id,
+                signingUrl = adobeSigningUrl
             };
-         
+
         }
 
         [HttpPost]
@@ -206,7 +220,7 @@ namespace AdobeSignApi.Controllers
             };
             try
             {
-                
+
                 var response = client.CreateAgreement(creditDataId, agreementRequest).Result;
                 repository.AddAdobeSignLog(creditDataId, "CreateAgreement", agreementRequest.ToJson(), response);
                 return response;
@@ -219,18 +233,125 @@ namespace AdobeSignApi.Controllers
             }
         }
 
-        private void CancelAgreement(int? creditDataId, string agreementId)
+        [HttpGet]
+        [Route("api/AppStatus")]
+        public IHttpActionResult GetAppStatus([FromUri] string token)
+        {
+            AppStatusResponse response = new AppStatusResponse
+            {
+
+                Comments = "",
+                LastUpdate = null,
+                Status = "NONE"
+            };
+
+            TokenInfo tokenInfo = VerifyToken(token, out string tokenErrorMessage);
+            if (string.IsNullOrWhiteSpace(tokenErrorMessage))
+            {
+                if (string.IsNullOrWhiteSpace(tokenInfo.DistributorID) || string.IsNullOrWhiteSpace(tokenInfo.UserID))
+                {
+                    return BadRequest("Missing user id.");
+                }
+                else
+                {
+                    var creditApp = repository.GetCreditApp(tokenInfo.DistributorID, tokenInfo.OrgID);
+                    response.DistributorID = Convert.ToInt32(tokenInfo.DistributorID);
+                    response.UserID = Convert.ToInt32(tokenInfo.UserID);
+                    response.RetailerID = Convert.ToInt32(tokenInfo.OrgID);
+                    if (creditApp != null)
+                    {
+                        response.LastUpdate = creditApp.LastUpdate;
+                        response.RetailerID = creditApp.RetailerId.Value;
+                        if (creditApp.Status == CreditAppStatusEnum.APPROVED.ToString() || creditApp.Status == CreditAppStatusEnum.DENIED.ToString())
+                        {
+                            response.LastUpdate = creditApp.LastUpdate;
+                            response.Status = creditApp.Status;
+                            response.Comments = this.GetComments(creditApp.Id);
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrWhiteSpace(creditApp.AdobeSignAgreementId))
+                            {
+                                this.RefreshToken(null);
+                                var agreement = this.GetAgreement(creditApp.AdobeSignAgreementId, creditApp.Id).Result;
+                                // update CreditData status
+                                repository.UpdateCreditAppStatus(creditApp.Id.Value, agreement.status);
+                                response.Status = agreement.status;
+                            }
+                            else
+                            {
+                                response.Status = creditApp.Status;
+                                response.Comments = this.GetComments(creditApp.Id);
+                            }
+                        }
+                    }
+                    return Ok(response);
+                }
+
+            }
+            else
+            {
+                return BadRequest(tokenErrorMessage);
+
+            }
+
+        }
+
+        private TokenInfo VerifyToken(string token, out string errorMessage)
+        {
+            TokenInfo tokenInfo = default(TokenInfo);
+            errorMessage = "";
+
+            string url = repository.GetKeyValue(verifyTokenKey);
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Token", token);
+            IRestResponse response = client.Execute(request);
+            try
+            {
+                tokenInfo = JsonConvert.DeserializeObject<TokenInfo>(response.Content);
+            }
+            catch (Exception)
+            {
+                errorMessage = response.Content;
+            }
+            return tokenInfo;
+        }
+        [HttpPut]
+        [Route("api/AdobeSign/CancelAgreement")]
+        public AgreementCancelResponse CancelCreditAgreement(int? creditDataId, string agreementId)
+        {
+            int creditId = Convert.ToInt32(creditDataId);
+            this.RefreshToken(creditId);
+            var cancelInfo = this.CancelAgreement(creditId, agreementId);
+            string retVal;
+            return new AgreementCancelResponse
+            {
+                status = cancelInfo
+            };
+        }
+
+        private string CancelAgreement(int? creditDataId, string agreementId)
         {
             try
             {
+                var prevAgreement = client.GetAgreement(creditDataId, agreementId);
+                client.UpdateAgreementStatus(creditDataId, agreementId, "CANCELED");
 
-                client.UpdateAgreementStatus(creditDataId, agreementId, "CANCELLED");
-                repository.AddAdobeSignLog(creditDataId, "CancelAgreement", $"AgreementId={agreementId}", new { status = "CANCELED"});
-                //return response;
+                repository.AddAdobeSignLog(creditDataId, "CancelAgreement", new
+                {
+                    AgreementId = agreementId,
+                    PreviousStatus = prevAgreement.status
+                }.ToJson()
+                , new { status = "CANCELED" });
+                var agreementResponse = client.GetAgreement(creditDataId, agreementId);
+                repository.AddAdobeSignLog(creditDataId, "GetAgreement", $"AgreementId={agreementId}", agreementResponse);
+
+                return agreementResponse.status;
             }
             catch (Exception e)
             {
-                repository.AddAdobeSignLog(creditDataId, "CancelAgreement", agreementId, e);
+                repository.AddAdobeSignLog(creditDataId, "CancelAgreement", $"AgreementId={agreementId}", e);
                 Console.WriteLine(e);
                 throw;
             }
@@ -244,30 +365,31 @@ namespace AdobeSignApi.Controllers
             try
             {
                 this.RefreshToken(null);
-                 response = Task.FromResult(client.CreateAgreement(null,agreement).Result);
+                response = Task.FromResult(client.CreateAgreement(null, agreement).Result);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 throw;
             }
-            
+
             return await response;
         }
 
         [HttpGet]
         [Route("api/AdobeSign/GetAgreement")]
-        public Task<AgreementResponse> GetAgreement([FromUri] string agreementId)
+        public Task<AgreementResponse> GetAgreement([FromUri] string agreementId, int? creditDataId)
         {
             AgreementResponse response;
             try
             {
-                this.RefreshToken(null);
-                response =  client.GetAgreement(null,agreementId);
-
+                this.RefreshToken(creditDataId);
+                response = client.GetAgreement(creditDataId, agreementId);
+                repository.AddAdobeSignLog(creditDataId, "GetAgreement", $"AgreementId={agreementId}", response);
             }
             catch (Exception e)
             {
+                repository.AddAdobeSignLog(creditDataId, "GetAgreement", $"AgreementId={agreementId}", e);
                 Console.WriteLine(e);
                 throw;
             }
@@ -311,7 +433,7 @@ namespace AdobeSignApi.Controllers
                 Console.WriteLine(e);
                 throw;
             }
-            
+
 
             return response;
             //client.CreateAgreement();
@@ -344,7 +466,7 @@ namespace AdobeSignApi.Controllers
                     }
                 });
 
-                response = Task.FromResult(client.AgreementSigningPosition(null,agreementId, field).Result);
+                response = Task.FromResult(client.AgreementSigningPosition(null, agreementId, field).Result);
             }
             catch (Exception e)
             {
@@ -354,22 +476,6 @@ namespace AdobeSignApi.Controllers
 
 
             return await response;
-        }
-
-
-        //[HttpGet]
-        //[Route("api/AdobeSign/UpdateAgreementStatus")]
-        public IHttpActionResult UpdateAgreementStatus()
-        {
-
-            //var clientid = Request.Headers["X-ADOBESIGN-CLIENTID"];
-            //if (clientid == "CBJCHBCAABAAShWitqkQgjhBRXFQH7zuOHJsdG-Vi4GS")
-            //    return Json(new { xAdobeSignClientId = "PZaD8TnKTzl0XSwdF6orBzGbPx6OcBwr" });
-            //else
-            //{
-            //    return new BadRequestResult();
-            //}
-            return null;
         }
 
         [HttpPost]
@@ -431,7 +537,7 @@ namespace AdobeSignApi.Controllers
         {
             using (var context = new CreditAppContext())
             {
-                var creditDataEntities = context.CreditData.Where(x => x.Status != "SIGNED" && x.AdobeSignAgreementId!=null && x.AdobeSignAgreementId != "").ToList();
+                var creditDataEntities = context.CreditData.Where(x => x.Status != "SIGNED" && x.AdobeSignAgreementId != null && x.AdobeSignAgreementId != "").ToList();
                 if (creditDataEntities.Any())
                 {
                     this.RefreshToken(null);
@@ -451,10 +557,20 @@ namespace AdobeSignApi.Controllers
                         }
                         context.SaveChanges();
                     }
-                   
+
                 }
             }
         }
-        
+
+        private string GetComments(int? creditDataId)
+        {
+            string retVal = string.Empty;
+            if (creditDataId.HasValue)
+            {
+                CreditAppRepository repository = new CreditAppRepository();
+                retVal = repository.GetCreditAppComments(creditDataId.Value);
+            }
+            return retVal;
+        }
     }
 }
